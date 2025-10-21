@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables
+.env
+*.env
+
+# Migrations (ixtiyoriy — agar avtomatik generatsiya qilinsa)
+# */migrations/
+
+# Jupyter va boshqa notbuklar
+*.ipynb_checkpoints
+
+# Coverage va test fayllari
+htmlcov/
+.coverage
+.tox/
+.cache/
+.pytest_cache/
+
+# Compiled
+*.so
+
+# Backup files
+*.bak
+*.swp
