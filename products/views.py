@@ -1,9 +1,12 @@
 from django.db import models
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, filters
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from django_filters import rest_framework as django_filters
+from products.filters import ProductFilter
 from products.models import Product, Review, Category
+from products.pagination import CustomPagination
 from products.serializers import ProductSerializer, ReviewSerializer, CategorySerializer
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -17,9 +20,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all() #queryset(qaysi ma'lumotlar bilan ishlash kerakligini ko'rsatadi)
     serializer_class = ProductSerializer #serializer_class (shumodelni JSON formatka o'tkazishligini ifodalaydi)
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination # bu o'zim yozgan custompagination
+
+    filter_backends = (django_filters.DjangoFilterBackend, filters.SearchFilter) # Filterlash uchun kerak
+    filterset_class = ProductFilter# o'zim yaratgan ProductFilres ni belgilayman
+    search_fields = ['name', 'description'] # bu search qilayotgandan qaysi parametrdan qidirishini belgilash
 
     def list(self, request, *args, **kwargs): #list(metod)=> bu maxsulotlarni ko'rish uchun
-        category = request.query_params.get('category', None)
+        category = request.query_params.get('category', None) # catigoriya id bo'yicha ro'yhat ko'rish
         if category:
             self.queryset = self.queryset.filter(category=category) #agar catigory bo'lsa productlarni faqat shu kategoriyaga oidligini tekshiradi
         return super().list(request, *args, **kwargs)
@@ -42,11 +51,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def average_rating(self, request, pk=None):
         product = self.get_object()
-        reviews = product.reviews.all()
+        reviews = product.reviews.all()# bu yerda reviews (modelda related_name='reviews' dagani uchun kelyapti keyin all deb xammasini oladi)
 
-        if reviews.count()==0:
+        if reviews.count()==0:# agar reviews bo'lmasa yoqdeb qaytaradi
             return Response({'average_rating': 'No reviews yet!'})
 
-        avg_rating = sum([review.rating for review in reviews]) / reviews.count()
+        avg_rating = sum([review.rating for review in reviews]) / reviews.count() # o'rtacha reytingni hisoblash
 
         return Response({"average_rating": avg_rating})

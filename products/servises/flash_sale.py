@@ -15,10 +15,10 @@ class FlashSaleListCreateView(generics.ListCreateAPIView):
     serializer_class = FlashSaleSerializer
 
 
-@api_view(['GET'])
+@api_view(['GET'])# faqat gert metodi orqali keladi
 def check_flash_sale(request, product_id):
     try:
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.get(id=product_id) # productni product id orqali oladi
     except Product.DoesNotExist:
         return Response({"error": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
 

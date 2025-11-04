@@ -31,17 +31,17 @@ class Review(models.Model):
 
 
 class FlashSale(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    discount_percentage = models.PositiveIntegerField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE) #bu product bilan bog'lanadi
+    discount_percentage = models.PositiveIntegerField() # bu qancha chegirmani ifodalydi
+    start_time = models.DateTimeField()# bu chegirmani boshlanish vaqti
+    end_time = models.DateTimeField()# bu chegirmani tugash vaqti
 
-    def is_active(self):
-        now = timezone.now()
-        return self.start_time <= now <= self.end_time
+    def is_active(self):# bu active yoki emasligini qaytaradi
+        now = timezone.now()# hozirgi vaqt
+        return self.start_time <= now <= self.end_time # true yoki False qaytaradi
 
     class Meta:
-        unique_together = ('product', 'start_time', 'end_time')
+        unique_together = ('product', 'start_time', 'end_time') # bu 1 ta maxsulotga ko'p chegirma berishni oldini oladi
 # bu menga produktni ko'rib unga qiziqanlar ro'yxatini ko'rsatadi
 class ProductViewHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

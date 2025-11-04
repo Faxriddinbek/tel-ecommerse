@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
-
+from config import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +20,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r43e6o^z*%bko670^8ypylml6c&ig4tk5qw47g(laox#nhvx**'
-
+SECRET_KEY = config.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config.ALLOWED_HOSTS
 
 
 # Application definition
@@ -38,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
+    'rest_framework_simplejwt',
     'drf_yasg',
+    'djoser',
     'products',
 
 ]
@@ -124,3 +126,39 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'PAGE_SIZE': 20,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+}
+
+SIMPLE_JWT = {
+    'ALGORITHM': 'HS256',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=120), # bu access tokens
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1), # bu refresh tokens
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'faxriddinorinboyev12@gmail.com'
+EMAIL_HOST_PASSWORD = 'hsnb iofu aojo tosl'
+
+DJOSER = { # bu bizaga o'zi Autentifikatsiyani qurib berdai (ichida to'ken olish registratsiya qilish va password va username update qilish bo'ladi)
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',# emailga qnday jo'natish kerakligini aniqlaydi
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',# token o'zidan oldingi (alg) va (typ) bilan proect secret keyini ishlatib token generatsiya qib beradi
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {},
+}
+
+TELEGRAM_BOT_TOKEN=config.TELEGRAM_BOT_TOKEN
+TELEGRAM_CHANNEL_ID=config.TELEGRAM_CHANNEL_ID
